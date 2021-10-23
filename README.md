@@ -1,37 +1,100 @@
-## Welcome to GitHub Pages
+# Setting up the Android SDK
+Follow the steps below to setup the invitee sdk in your existing project.
 
-You can use the [editor on GitHub](https://github.com/InviteeCo/invitee-android-docs/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Install SDK
 
-### Markdown
+Install the invitee sdk
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
+#### build.gradle (module)
 ```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+implementation "com.gitlab.invitee:invitee.sdk.android:1.0.0"
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+#### gradle.properties
+```markdown
+authToken=jp_966vc54dg6grckmod53mp3h9i6
+```
 
-### Jekyll Themes
+#### build.gradle (project)
+```markdown
+allprojects {
+    repositories {
+        ...
+        maven {
+            url 'https://jitpack.io'
+            credentials { username authToken }
+        }
+    }
+}
+```
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/InviteeCo/invitee-android-docs/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+#### invitee.xml
+Create the invitee config file in /res/values (ie. res/values/invitee.xml)
+```markdown
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="co_invitee_sdk_api_key">YOUR API KEY HERE</string>
+</resources>
+```
 
-### Support or Contact
+Ensure app allows access to contacts.
+If you haven't generated an api key before, you can create from within the [web dashboard](https://app.invitee.co/account/api-keys)
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+
+### Setup a user
+Calling setup user is the first step. You should call this as soon as a user is logged in. This will add a user to a campaign if one is available & fetch information about the campaign, which you can then show in your UI
+
+```markdown
+val inviteeUser = User("123456", "test", "user", "0466598683")
+
+InviteeSDK.setup(inviteeUser, object: InviteeSetupCallback {
+    override fun campaignAvailable(campaign: Campaign) {
+        InviteeSDK.present(requireActivity())
+    }
+
+    override fun noCampaignAvailable() {
+
+    }
+
+    override fun error(exception: InviteeSDKException) {
+
+    }
+})
+```
+
+### Present campaign overview page
+
+The campaign overview page shows information to a user about the current referral campaign they are in & allows them to send invites to their friends.
+The information seen on this page reflects what you have setup for that campaign in the web dashboard.
+
+```markdown
+InviteeSDK.present(requireActivity())
+```
+
+### Present referral notifications
+
+When users signup both the referrer & referee can be notified about who of their friends signed up & what reward they earned.
+Call this on a UIViewController where you want to present these popups.
+
+```markdown
+InviteeSDK.presentNotificationIfNeeded(requireActivity())
+```
+
+### Tracking referral steps
+
+In order for Invitee to process referrals, you need to let us know when key 'steps' have been completed. These steps are configured when you setup a campaign & are used to indicate a completed referral. Eg. Sign up + make purchase = referral reward.
+
+There are two ways to track these steps, either via our REST api or through the SDK itself. If you choose to use the SDK then the following code snippet can be used as a reference for tracking.
+
+```markdown
+InviteeSDK.trackReferralStep(user, "SIGNUP", object: InviteeTrackCallback {
+    override fun success() {
+        toast("Tracked successfully.")
+    }
+
+    override fun error(ex: InviteeSDKException) {
+        toast("Track failed.")
+    }
+})
+```
