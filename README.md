@@ -50,15 +50,15 @@ val inviteeUser = User("123456", "test", "user", "0466598683")
 
 InviteeSDK.setup(inviteeUser, object: InviteeSetupCallback {
     override fun campaignAvailable(campaign: Campaign) {
-        InviteeSDK.present(requireActivity())
+        // show the referral information & a CTA to present the campaign overview page
     }
 
     override fun noCampaignAvailable() {
-
+        // no live campaigns or all campaigns are full
     }
 
     override fun error(exception: InviteeSDKException) {
-
+        // an error occurred
     }
 })
 ```
@@ -90,11 +90,11 @@ There are two ways to track these steps, either via our REST api or through the 
 ```markdown
 InviteeSDK.trackReferralStep(user, "SIGNUP", object: InviteeTrackCallback {
     override fun success() {
-        toast("Tracked successfully.")
+        // successfully tracked a referral step
     }
 
     override fun error(ex: InviteeSDKException) {
-        toast("Track failed.")
+        // an error occured
     }
 })
 ```
