@@ -8,7 +8,7 @@ Install the invitee sdk
 
 #### build.gradle (module)
 ```markdown
-implementation "com.gitlab.invitee:invitee.sdk.android:1.0.0"
+implementation "com.gitlab.invitee:invitee.sdk.android:1.0.2"
 ```
 
 #### gradle.properties
