@@ -16,9 +16,10 @@ implementation "com.gitlab.invitee:invitee.sdk.android:1.0.2"
 authToken=jp_966vc54dg6grckmod53mp3h9i6
 ```
 
-#### build.gradle (project)
+#### settings.gradle
 ```markdown
-allprojects {
+dependencyResolutionManagement {
+    ...
     repositories {
         ...
         maven {
